@@ -1,3 +1,3 @@
-# MessengerSdk
+# Messenger Sdk
 
-A description of this package.
+Messenger wrapper written in Swift.
