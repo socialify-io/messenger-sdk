@@ -1,3 +1,3 @@
 # Messenger Sdk
 
-Messenger wrapper written in Swift.
+Sdk for Facebook Messenger written in Swift.
