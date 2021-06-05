@@ -24,7 +24,7 @@ public class MessengerClient {
     ///  - email
     ///  - password
     /// Returns
-    /// - actually nothing
+    /// - True or false
 
     public func login(email: String, password: String, completion: @escaping (Result<String, MessengerError>) -> Void) {
         // Getting params to log in
