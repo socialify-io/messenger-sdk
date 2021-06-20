@@ -7,17 +7,20 @@
 
 import Foundation
 
-func matches(for regex: String, in text: String) -> [String] {
-    do {
-        let regex = try NSRegularExpression(pattern: regex)
-        let results = regex.matches(in: text,
-                                range: NSRange(text.startIndex..., in: text))
-        let finalResult = results.map {
-            String(text[Range($0.range, in: text)!])
+@available(iOS 13.0, *)
+extension MessengerClient {
+    private func matches(for regex: String, in text: String) -> [String] {
+        do {
+            let regex = try NSRegularExpression(pattern: regex)
+            let results = regex.matches(in: text,
+                                    range: NSRange(text.startIndex..., in: text))
+            let finalResult = results.map {
+                String(text[Range($0.range, in: text)!])
+            }
+            return finalResult
+        } catch let error {
+            print("invalid regex: \(error.localizedDescription)")
+            return []
+           }
         }
-        return finalResult
-    } catch let error {
-        print("invalid regex: \(error.localizedDescription)")
-        return []
-       }
-    }
+}
