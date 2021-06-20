@@ -32,7 +32,9 @@ extension MessengerClient {
                 request.httpBody = Data(payload.map { "\($0.key)=\($0.value)" }.joined(separator: "&").utf8)
                 
                 // Sending request
-                self._request(request: request) { response in
+                
+    
+                self.makeRequest(request: request) { response in
                     switch response {
                     case .success(let response):
                         // Parsing response
@@ -102,7 +104,7 @@ extension MessengerClient {
         request.httpMethod = "GET"
         
         // Sending request
-        _request(request: request) { response in
+        self.makeRequest(request: request) { response in
             switch response {
             case .success(let response):
                 // Parsing response

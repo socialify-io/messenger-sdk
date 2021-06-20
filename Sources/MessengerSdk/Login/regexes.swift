@@ -9,6 +9,8 @@ import Foundation
 
 @available(iOS 13.0, *)
 extension MessengerClient {
+    
+    /// MARK: - Regex
     private func matches(for regex: String, in text: String) -> [String] {
         do {
             let regex = try NSRegularExpression(pattern: regex)
