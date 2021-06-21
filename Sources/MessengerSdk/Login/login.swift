@@ -54,7 +54,14 @@ extension MessengerClient {
                         if let response = response as? HTTPURLResponse {
                             // Checking is logged in
                             let content: String = String(data: result["data"] as! Data, encoding: String.Encoding.utf8) ?? ""
+                            print(content)
                             if content.contains("clientID") {
+                                // Getting clientID
+                                let regex = "\"clientID\":\"[a-z-0-9]{36}\""
+                                self.clientID = self.matches(for: regex, in: content)[0]
+                                    .replacingOccurrences(of: "\"clientID\":\"", with: "")
+                                    .replacingOccurrences(of: "\"", with: "")
+
                                 completion(.success(true))
                             } else if content.contains("Sorry, something went wrong.") {
                                 completion(.failure(MessengerError.MessengerError))

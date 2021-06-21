@@ -11,7 +11,7 @@ import Foundation
 extension MessengerClient {
     
     /// MARK: - Regex
-    private func matches(for regex: String, in text: String) -> [String] {
+    func matches(for regex: String, in text: String) -> [String] {
         do {
             let regex = try NSRegularExpression(pattern: regex)
             let results = regex.matches(in: text,

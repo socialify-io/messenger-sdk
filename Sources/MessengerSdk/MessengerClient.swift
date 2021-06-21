@@ -23,7 +23,7 @@ public class MessengerClient {
     public var delegate: Session?
     public var session: URLSession?
     
-    public let clientID = ""
+    public var clientID = ""
     
     
     /// MARK: - Messenger Errors
