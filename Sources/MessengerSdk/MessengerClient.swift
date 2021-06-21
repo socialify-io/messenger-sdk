@@ -13,10 +13,17 @@ public class MessengerClient {
     
     /// MARK: - Public variables
     
-    public init() {}
+    public init() {
+        self.delegate = false ? Session() : nil
+        self.session = URLSession(configuration: URLSessionConfiguration.default, delegate: delegate, delegateQueue: nil)
+    }
     
     public let LIBRARY_VERSION = "v0.0.1"
-    public let session = URLSession.shared
+    
+    public var delegate: Session?
+    public var session: URLSession?
+    
+    public let clientID = ""
     
     
     /// MARK: - Messenger Errors

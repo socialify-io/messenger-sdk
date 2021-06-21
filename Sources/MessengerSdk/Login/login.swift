@@ -20,7 +20,7 @@ extension MessengerClient {
     /// Returns
     /// - True or false
 
-    public func login(email: String, password: String, completion: @escaping (Result<String, MessengerError>) -> Void) {
+    public func login(email: String, password: String, completion: @escaping (Result<Bool, MessengerError>) -> Void) {
         // Getting params to log in
         getParams(email: email, password: password) { response in
             switch response {
@@ -31,27 +31,38 @@ extension MessengerClient {
                 request.httpMethod = "POST"
                 request.httpBody = Data(payload.map { "\($0.key)=\($0.value)" }.joined(separator: "&").utf8)
                 
-                // Sending request
+                request.allHTTPHeaderFields = [
+                    "Host": "www.messenger.com",
+                    "Upgrade-Insecure-Requests": "1",
+                    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
+                    "Sec-Fetch-Site": "none",
+                    "Sec-Fetch-Mode": "navigate",
+                    "Sec-Fetch-User": "?1",
+                    "Sec-Fetch-Dest": "document",
+                    "Sec-Ch-Ua": "\"Chromium\";v=\"91\", \" Not;A Brand\";v=\"99\"",
+                    "Sec-Ch-Ua-Mobile": "?0",
+                    "Accept-Encoding": "gzip, deflate",
+                    "Accept-Language": "en-GB,en-US;q=0.9,en;q=0.8",
+                    "Connection": "close"
+                ]
                 
-    
-                self.makeRequest(request: request) { response in
-                    switch response {
-                    case .success(let response):
-                        // Parsing response
-                        let content: String = String(data: response, encoding: String.Encoding.utf8) ?? ""
-
-                        var status: String = ""
-                        
-                        if content.contains("clientID") {
-                            status = "Logged in"
-                        } else if content.contains("Sorry, something went wrong.") {
-                            completion(.failure(MessengerError.MessengerError))
-                        } else {
-                            status = "Not logged in"
+                // Sending request
+                self.makeRequest(request: request) { result in
+                    switch result {
+                    case .success(let result):
+                        let response = result["response"]
+                        if let response = response as? HTTPURLResponse {
+                            // Checking is logged in
+                            let content: String = String(data: result["data"] as! Data, encoding: String.Encoding.utf8) ?? ""
+                            if content.contains("clientID") {
+                                completion(.success(true))
+                            } else if content.contains("Sorry, something went wrong.") {
+                                completion(.failure(MessengerError.MessengerError))
+                            } else {
+                                completion(.success(false))
+                            }
                         }
-                        
-                        completion(.success(status))
-                        
+                    
                     case .failure(let error):
                         completion(.failure(error))
                     }
@@ -103,12 +114,27 @@ extension MessengerClient {
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
         
+        request.allHTTPHeaderFields = [
+            "Host": "www.messenger.com",
+            "Upgrade-Insecure-Requests": "1",
+            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
+            "Sec-Fetch-Site": "none",
+            "Sec-Fetch-Mode": "navigate",
+            "Sec-Fetch-User": "?1",
+            "Sec-Fetch-Dest": "document",
+            "Sec-Ch-Ua": "\"Chromium\";v=\"91\", \" Not;A Brand\";v=\"99\"",
+            "Sec-Ch-Ua-Mobile": "?0",
+            "Accept-Encoding": "gzip, deflate",
+            "Accept-Language": "en-GB,en-US;q=0.9,en;q=0.8",
+            "Connection": "close"
+        ]
+        
         // Sending request
         self.makeRequest(request: request) { response in
             switch response {
             case .success(let response):
                 // Parsing response
-                let content: String = String(data: response, encoding: String.Encoding.utf8) ?? ""
+                let content: String = String(data: response["data"] as! Data, encoding: String.Encoding.utf8) ?? ""
                 
                 if content.contains("Sorry, something went wrong.") {
                     completion(.failure(MessengerError.MessengerError))
